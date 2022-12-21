@@ -1,5 +1,9 @@
 WIDTH, HEIGHT = 800, 600
-WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 FPS = 60
-TILE_SIZE = 50
+TILE_SIZE = 100
+
+
+# colours
+WHITE = (255, 255, 255)
+BG_COLOUR = (18, 18, 18)

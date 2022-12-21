@@ -1,6 +1,10 @@
 from enum import Enum
 import json
 
+import pygame
+
+from conts import TILE_SIZE
+
 
 class TILE_TYPES(Enum):
     NONE = 0
@@ -88,16 +92,40 @@ def parse_level_data(level_data):
     return level, points
 
 
+class Tile(pygame.sprite.Sprite):
+    """
+    Tile represents a level tile not in path
+    """
+
+    def __init__(self, pos):
+        super().__init__()
+        self.image = pygame.Surface([TILE_SIZE, TILE_SIZE])
+        self.image.fill((48, 47, 6))
+
+        self.rect = pygame.Rect(*pos, TILE_SIZE, TILE_SIZE)
+
+
 class Level:
-    def print_board(self):
-        for i in self.num_board:
-            print(*i, sep=" ")
+    def __init__(self, path):
+        self.level_data = get_level(path)
+        self.level, self.path = parse_level_data(self.level_data)
+        self.start_point = (
+            self.path[0][1] * TILE_SIZE,
+            self.path[0][0] * TILE_SIZE,
+        )
+        self.tiles = pygame.sprite.Group()
+        self.create_tiles()
+
+    def create_tiles(self):
+        for i, row in enumerate(self.level):
+            for j, tile in enumerate(row):
+                print(tile)
+                if tile == TILE_TYPES.NONE:
+                    self.tiles.add(Tile((j * TILE_SIZE, i * TILE_SIZE)))
 
     @property
     def num_board(self):
         return [[j.value for j in i] for i in self.level]
 
-    def __init__(self, path):
-        self.level_data = get_level(path)
-        self.level, self.path = parse_level_data(self.level_data)
-        self.start_point = self.path[0]
+    def draw(self, win):
+        self.tiles.draw(win)

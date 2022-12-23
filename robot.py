@@ -21,7 +21,7 @@ class Robot(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
         self.image = pygame.image.load("./assets/robot.png")
-        self.image = pygame.transform.scale(self.image, (48, 64))
+        self.image = pygame.transform.scale(self.image, (TILE_SIZE, TILE_SIZE))
         self.x = pos[0] + (TILE_SIZE - self.image.get_width()) / 2
         self.y = pos[1] + TILE_SIZE
         self.y -= self.image.get_height()

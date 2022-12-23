@@ -96,7 +96,7 @@ class Tile(pygame.sprite.Sprite):
 
 class Level:
     def __init__(self, path):
-        from level_loader import get_level, parse_level_data
+        from .level_loader import get_level, parse_level_data
 
         self.level_data = get_level(path)
         self.level, self.path = parse_level_data(self.level_data)

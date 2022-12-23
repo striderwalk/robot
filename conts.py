@@ -6,4 +6,4 @@ TILE_SIZE = 100
 
 # colours
 WHITE = (255, 255, 255)
-BG_COLOUR = (18, 18, 18)
+BG_COLOUR = (236, 255, 251)

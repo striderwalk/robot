@@ -10,6 +10,7 @@ class MOVES(Enum):
     LEFT = 1
     RIGHT = -1
     FD = 2
+    INTERACT = 3
 
 
 class Robot(pygame.sprite.Sprite):
@@ -19,13 +20,15 @@ class Robot(pygame.sprite.Sprite):
 
     def __init__(self, pos):
         super().__init__()
-        self.image = pygame.Surface([40, 70])
-        self.image.fill((255, 251, 16))
-        self.x = pos[0] + TILE_SIZE / 2 - 20
+        self.image = pygame.image.load("./assets/robot.png")
+        self.image = pygame.transform.scale(self.image, (48, 64))
+        self.x = pos[0] + (TILE_SIZE - self.image.get_width()) / 2
         self.y = pos[1] + TILE_SIZE
-        self.y -= 70
+        self.y -= self.image.get_height()
         self.facing = 1
-        self.rect = pygame.Rect((self.x, self.y, 40, 70))
+        self.rect = pygame.Rect(
+            (self.x, self.y, self.image.get_width(), self.image.get_height())
+        )
         self.next_pos = []
         self.next_facing = []
 
@@ -38,14 +41,32 @@ class Robot(pygame.sprite.Sprite):
         return self.x, self.y
 
     def update_rect(self):
-        self.rect = pygame.Rect((self.x, self.y, 40, 70))
+        self.rect = pygame.Rect(
+            (self.x, self.y, self.image.get_width(), self.image.get_height())
+        )
+
+    def check_fd(self, level):
+        x, y = self.level_pos
+        x += self.facing
+        if level.level[x][y] != TILE_TYPES.NONE:
+            return True
+
+    def handle_move(self, level, move):
+        if move == MOVES.FD:
+            if not self.check_fd(level):
+                return
+            self.next_pos = list(
+                np.linspace(self.pos, [self.x + TILE_SIZE * self.facing, self.y], 10)
+            )
+        if move == MOVES.INTERACT:
+            # level.interactables.
+            ...
 
     def update(self, level, move=None):
         if level.level[self.level_pos[1]][self.level_pos[0]] == TILE_TYPES.NONE:
             self.kill()
 
         self.update_rect()
-        print(f"hi {self.next_pos=}")
         if self.next_pos:
             self.x, self.y = self.next_pos.pop(0)
         if self.next_facing:
@@ -53,8 +74,5 @@ class Robot(pygame.sprite.Sprite):
 
         if self.next_pos or self.next_facing or not move:
             return
-        if move == MOVES.FD:
 
-            self.next_pos = list(
-                np.linspace(self.pos, [self.x + TILE_SIZE * self.facing, self.y], 10)
-            )
+        self.handle_move(level, move)

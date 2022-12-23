@@ -1,7 +1,24 @@
 import pygame
-from conts import BG_COLOUR, WIDTH, HEIGHT, WHITE, FPS
+from conts import BG_COLOUR, TILE_SIZE, WIDTH, HEIGHT, WHITE, FPS
 from level import Level
 from robot import MOVES, Robot
+
+
+class Game:
+    def __init__(self) -> None:
+        self.level = Level("./levels/level.json")
+
+        # player group only contains only
+        # it uses a sprte group bc the interface is nice to use
+        self.player = pygame.sprite.Group()
+        self.player.add(Robot(self.level.start_point))
+
+    def update(self, move):
+        self.player.update(self.level, move)
+
+    def draw(self, win):
+        self.level.draw(win)
+        self.player.draw(win)
 
 
 def main():
@@ -10,16 +27,19 @@ def main():
     pygame.init()
     win = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
-    players = pygame.sprite.Group()
-    level = Level("./levels/level.json")
-    players.add(Robot(level.start_point))
-
+    game = Game()
     # main loop
     run = True
+    move = None
+
     while run:
 
-        level.draw(win)
-        players.draw(win)
+        screen = pygame.Surface((800, 400))
+        game.update(move)
+        game.draw(screen)
+        win.blit(screen, (0, 0))
+        # store the player's move
+        move = None
         for event in pygame.event.get():
             # handle pygame events
             if event.type == pygame.QUIT:
@@ -31,10 +51,9 @@ def main():
                     run = False
 
                 elif event.key == pygame.K_RIGHT:
-                    players.update(level, MOVES.FD)
+                    move = MOVES.FD
 
-        # update frame
-        players.update(level)
+        # update win
         pygame.display.flip()
         win.fill(BG_COLOUR)
         clock.tick(FPS)

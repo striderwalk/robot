@@ -7,8 +7,12 @@ https://docs.python.org/3/howto/logging.html#:~:text=logging.basicconfig(format%
 FILE_NAME = "log.txt"
 
 
-def configer_logger(level=logging.ERROR):
+def configer_logger(level=logging.WARNING):
     logging.basicConfig(
         format="%(levelname)s: %(message)s", level=level
     )  # , filename=FILE_NAME)
     logging.info("setup logger")
+
+
+def run():  # i prefer run but wanted to keep args........
+    configer_logger()

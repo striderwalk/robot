@@ -1,4 +1,5 @@
 from enum import Enum
+import logging
 
 import pygame
 
@@ -76,10 +77,10 @@ def get_tile_image(tile_type, neighbours, coner_neighbours):
         else:  # inner
             image = add_nubs(image, coner_neighbours)
 
-    elif tile_type in TILE_PATH_MAP:
-        image = pygame.image.load(TILE_PATH_MAP[tile_type])
+    elif str(tile_type) in TILE_PATH_MAP:
+        image = pygame.image.load(TILE_PATH_MAP[str(tile_type)])
     else:
-
+        logging.warning(f"tile of type {tile_type} failed to load image")
         image = pygame.image.load("./assets/fail.png")
 
     return image

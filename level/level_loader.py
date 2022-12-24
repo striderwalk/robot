@@ -47,14 +47,14 @@ class temp:
 
 
 def convert_level(level, point):
+    empty = "\u001b[43;1m \u001b[0m"
 
     level[point[0]][point[1]] = temp()
     vals = "\n".join(str([i.value for i in row]) for row in level)
-    vals = (
-        vals[: vals.index("H") - 1]
-        + "\u001b[43;1m \u001b[0m"
-        + vals[vals.index("H") + 2 :]
-    )
+
+    start = vals.index("H") - 1
+    stop = vals.index("H") + 2
+    vals = vals[:start] + empty + vals[stop:]
     return vals
 
 

@@ -1,4 +1,5 @@
 from enum import Enum
+import logging
 import numpy as np
 import pygame
 
@@ -20,7 +21,7 @@ class Robot(pygame.sprite.Sprite):
 
     def __init__(self, pos):
         super().__init__()
-        self.image = pygame.image.load("./assets/robot.png")
+        self.image = pygame.image.load("./assets/robot.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (TILE_SIZE, TILE_SIZE))
         self.x = pos[0] + (TILE_SIZE - self.image.get_width()) / 2
         self.y = pos[1] + TILE_SIZE
@@ -38,6 +39,7 @@ class Robot(pygame.sprite.Sprite):
 
     @property
     def pos(self):
+
         return self.x, self.y
 
     def update_rect(self):
@@ -52,6 +54,7 @@ class Robot(pygame.sprite.Sprite):
             return True
 
     def handle_move(self, level, move):
+        logging.debug(f"{move=}")
         if move == MOVES.FD:
             if not self.check_fd(level):
                 return

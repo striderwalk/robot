@@ -1,5 +1,10 @@
+import logging
+
 import pygame
-from conts import BG_COLOUR, TILE_SIZE, WIDTH, HEIGHT, WHITE, FPS
+
+import lighting
+import setup_logger
+from conts import BG_COLOUR, FPS, HEIGHT, TILE_SIZE, WIDTH
 from level import Level
 from robot import MOVES, Robot
 
@@ -18,7 +23,36 @@ class Game:
 
     def draw(self, win):
         self.level.draw(win)
+        surf = self.level.lighting_map.copy()
+        pos = self.player.sprites()[0].pos
+        pos = pos[0] + TILE_SIZE / 2, pos[1] + TILE_SIZE / 2
+
+        ploy = lighting.get_rays(pos, self.level.walls, start_angle=270, end_angle=450)
+        if ploy:
+            pygame.draw.polygon(surf, (255, 255, 0), ploy)
+            # for i in ploy:
+            # pygame.draw.line(win, (0, 0, 255), pos, i, width=3)
+
+        surf.convert_alpha()
+        surf.set_alpha(200)
+        win.blit(surf, (0, 0))
         self.player.draw(win)
+
+
+def handle_events():
+    move = None
+    for event in pygame.event.get():
+        # handle pygame events
+        if event.type == pygame.QUIT:
+            nice_exit()
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                nice_exit()
+
+            elif event.key == pygame.K_RIGHT:
+                move = MOVES.FD
+    return move
 
 
 def main():
@@ -29,29 +63,16 @@ def main():
     clock = pygame.time.Clock()
     game = Game()
     # main loop
-    run = True
     move = None
 
-    while run:
+    while True:
 
         screen = pygame.Surface((800, 400))
         game.update(move)
         game.draw(screen)
         win.blit(screen, (0, 0))
         # store the player's move
-        move = None
-        for event in pygame.event.get():
-            # handle pygame events
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                run = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    run = False
-
-                elif event.key == pygame.K_RIGHT:
-                    move = MOVES.FD
+        move = handle_events()
 
         # update win
         pygame.display.flip()
@@ -59,5 +80,12 @@ def main():
         clock.tick(FPS)
 
 
+def nice_exit():
+    pygame.quit()
+    logging.info("Bye!")
+    exit()
+
+
 if __name__ == "__main__":
+    setup_logger.run()
     main()

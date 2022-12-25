@@ -15,28 +15,15 @@ class Game:
 
         # player group only contains only
         # it uses a sprte group bc the interface is nice to use
-        self.player = pygame.sprite.Group()
-        self.player.add(Robot(self.level.start_point))
+        self.player = Robot(self.level.start_point)
 
     def update(self, move):
         self.player.update(self.level, move)
 
     def draw(self, win):
-        self.level.draw(win)
-        surf = self.level.lighting_map.copy()
-        pos = self.player.sprites()[0].pos
-        pos = pos[0] + TILE_SIZE / 2, pos[1] + TILE_SIZE / 2
-
-        ploy = lighting.get_rays(pos, self.level.walls, start_angle=270, end_angle=450)
-        if ploy:
-            pygame.draw.polygon(surf, (255, 255, 0), ploy)
-            # for i in ploy:
-            # pygame.draw.line(win, (0, 0, 255), pos, i, width=3)
-
-        surf.convert_alpha()
-        surf.set_alpha(200)
-        win.blit(surf, (0, 0))
-        self.player.draw(win)
+        self.level.draw_fg(win)
+        self.player.draw(win, self.level)
+        self.level.draw_bg(win)
 
 
 def handle_events():

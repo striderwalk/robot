@@ -1,8 +1,10 @@
-from enum import Enum
 import logging
+from enum import Enum
+
 import numpy as np
 import pygame
 
+import lighting
 from conts import TILE_SIZE
 from level import TILE_TYPES
 
@@ -14,7 +16,7 @@ class MOVES(Enum):
     INTERACT = 3
 
 
-class Robot(pygame.sprite.Sprite):
+class Robot:
     """
     facing  left = 1, right = -1
     """
@@ -32,6 +34,21 @@ class Robot(pygame.sprite.Sprite):
         )
         self.next_pos = []
         self.next_facing = []
+
+    def draw(self, win, level):
+        surf = level.lighting_map.copy()
+        pos = self.pos
+        pos = pos[0] + TILE_SIZE / 2, pos[1] + TILE_SIZE / 2
+
+        ploy = lighting.get_rays(pos, level.walls, start_angle=-60, end_angle=60)
+        if ploy:
+
+            pygame.draw.polygon(surf, (255, 255, 255), ploy)
+
+        surf.convert_alpha()
+        surf.set_alpha(100)
+        win.blit(surf, (0, 0))
+        win.blit(self.image, self.pos)
 
     @property
     def level_pos(self):

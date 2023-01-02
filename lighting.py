@@ -96,7 +96,7 @@ def get_corners(rect):
     return [c1, c2, c3, c4]
 
 
-def find_angles(rect, pos: tuple[float]) -> tuple[float, float]:
+def find_angles(rect, pos):
     min_theata = 10_000
     max_theata = -10_000
     for i in get_corners(rect):

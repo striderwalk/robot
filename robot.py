@@ -34,18 +34,22 @@ class Robot:
         )
         self.next_pos = []
         self.next_facing = []
+        self.last_ploy = [self.pos, self.pos, self.pos]
 
     def draw(self, win, level):
         surf = level.lighting_map.copy()
-        pos = self.pos
-        pos = pos[0] + TILE_SIZE / 2, pos[1] + TILE_SIZE / 2
+        if len(self.next_facing) == 0 and self.last_ploy:
+            ploy = self.last_ploy
+        else:
+            pos = self.pos
+            pos = pos[0] + TILE_SIZE / 2, pos[1] + TILE_SIZE / 2
 
-        ploy = lighting.get_rays(
-            pos, level.walls, start_angle=-60, end_angle=60, ray_num=250
-        )
-        if ploy:
+            ploy = lighting.get_rays(
+                pos, level.walls, start_angle=-60, end_angle=60, ray_num=250
+            )
+            self.last_plot = ploy
 
-            pygame.draw.polygon(surf, (255, 255, 255), ploy)
+        pygame.draw.polygon(surf, (255, 255, 255), ploy)
 
         surf.convert_alpha()
         surf.set_alpha(100)

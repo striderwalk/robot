@@ -1,3 +1,4 @@
 - [ ] lifts
 - [ ] lightiing doing
 - [ ] remove player sprite group
+- [ ] LOCAL PYGAME/NUMPY INSTALLS

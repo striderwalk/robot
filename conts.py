@@ -1,7 +1,7 @@
 WIDTH, HEIGHT = 800, 600
 BLACK = (0, 0, 0)
 FPS = 60
-TILE_SIZE = 100
+TILE_SIZE = 32
 
 
 # colours

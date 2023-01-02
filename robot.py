@@ -40,7 +40,9 @@ class Robot:
         pos = self.pos
         pos = pos[0] + TILE_SIZE / 2, pos[1] + TILE_SIZE / 2
 
-        ploy = lighting.get_rays(pos, level.walls, start_angle=-60, end_angle=60)
+        ploy = lighting.get_rays(
+            pos, level.walls, start_angle=-60, end_angle=60, ray_num=250
+        )
         if ploy:
 
             pygame.draw.polygon(surf, (255, 255, 255), ploy)
@@ -79,7 +81,7 @@ class Robot:
                 np.linspace(self.pos, [self.x + TILE_SIZE * self.facing, self.y], 10)
             )
         if move == MOVES.INTERACT:
-            # level.interactables.
+            # level.interactables
             ...
 
     def update(self, level, move=None):

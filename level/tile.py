@@ -67,8 +67,8 @@ nub = pygame.transform.scale(nub, (TILE_SIZE, TILE_SIZE))
 def add_nubs(image, neighbours):
     for i in range(-1, len(neighbours) - 1):
         if neighbours[i] and neighbours[i + 1]:
-            _corner = pygame.transform.rotate(corner, 90 + i * 90)
-            image.blit(_corner, (0, 0))
+            _nub = pygame.transform.rotate(nub, 90 + i * 90)
+            image.blit(_nub, (0, 0))
 
     return image
 

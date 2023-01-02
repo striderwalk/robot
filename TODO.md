@@ -1,3 +1,3 @@
 - [ ] lifts
-- [ ] lightiing 
+- [ ] lightiing doing
 - [ ] remove player sprite group

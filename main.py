@@ -44,25 +44,28 @@ def handle_events():
 
 def main():
 
-    # setup pygame
+    # setup pygame -------------------------------->
     pygame.init()
     win = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
+    # setup game -------------------------------->
     game = Game()
-    # main loop
     move = None
 
+    # main loop -------------------------------->
     while True:
 
-        screen = pygame.Surface((800, 400))
+        screen = pygame.Surface((32 * 8, 32 * 4))
         game.update(move)
         game.draw(screen)
+        screen = pygame.transform.scale(screen, (800, 400))
         win.blit(screen, (0, 0))
         # store the player's move
         move = handle_events()
 
         # update win
         pygame.display.flip()
+        pygame.display.set_caption(f"{clock.get_fps()}")
         win.fill(BG_COLOUR)
         clock.tick(FPS)
 

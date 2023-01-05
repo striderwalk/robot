@@ -15,32 +15,6 @@ class TILE_TYPES(Enum):
     LIFT = 4
 
 
-class Lift(pygame.sprite.Sprite):
-    def __init__(self, pos):
-
-        self.image = pygame.image.load("./assets/tiles/lift.png")
-        self.image = pygame.transform.scale(self.image, (TILE_SIZE, TILE_SIZE))
-        self.rect = pygame.Rect(*pos, TILE_SIZE, TILE_SIZE)
-        self.x, self.y = pos
-        self.moveing = False
-
-    @property
-    def tile_pos(self):
-        return int(self.x // TILE_SIZE), int(self.y // TILE_SIZE)
-
-    @property
-    def pos(self):
-        return self.x, self.y
-
-    def update_rect(self):
-        self.rect = pygame.Rect((self.x, self.y, TILE_SIZE, TILE_SIZE))
-
-    def update(self, players):
-        if self.moveing:
-            self.x, self.y = self.next_pos.pop(0)
-            self.update_rect()
-
-
 class Tile(pygame.sprite.Sprite):
     """
     Tile represents a level tile not in path

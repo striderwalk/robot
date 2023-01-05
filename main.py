@@ -2,7 +2,7 @@ import logging
 
 import pygame
 
-import lighting
+
 import setup_logger
 from conts import BG_COLOUR, FPS, HEIGHT, TILE_SIZE, WIDTH
 from level import Level
@@ -43,7 +43,6 @@ def handle_events():
 
 
 def main():
-
     # setup pygame -------------------------------->
     pygame.init()
     win = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -62,7 +61,6 @@ def main():
         win.blit(screen, (0, 0))
         # store the player's move
         move = handle_events()
-
         # update win
         pygame.display.flip()
         pygame.display.set_caption(f"{clock.get_fps()}")

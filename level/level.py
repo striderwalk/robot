@@ -2,7 +2,7 @@ import pygame
 
 from conts import BLACK, TILE_SIZE
 
-from .tile import TILE_TYPES, Tile, Lift
+from .tile import TILE_TYPES, Tile
 
 
 class Level:
@@ -36,7 +36,7 @@ class Level:
                 if not tile:
                     continue
                 rect = ((j * TILE_SIZE), (i * TILE_SIZE), TILE_SIZE, TILE_SIZE)
-                pygame.draw.rect(surf, BLACK, rect)
+                pygame.draw.rect(surf, (16, 20, 31), rect)
         self.lighting_map = surf
 
     def create_tiles(self):

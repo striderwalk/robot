@@ -116,7 +116,7 @@ def check_others(others, mouse_pos):
             return i
 
 
-def get_rays(pos, others=None, ray_num=500, start_angle=0, end_angle=370):
+def get_rays(pos, others=None, ray_num=1000, start_angle=0, end_angle=360):
     logging.info(f"{pos=}, f{len(others)}")
     dtheata = (math.pi * 2) / ray_num
     theata = math.radians(start_angle)
@@ -124,7 +124,7 @@ def get_rays(pos, others=None, ray_num=500, start_angle=0, end_angle=370):
     if others:
         if check_others(others, pos):
             return False
-    points = [pos]
+    points = []
     for _ in range(ray_num):
         if theata > max_theata:
             break

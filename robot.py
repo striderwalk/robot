@@ -34,27 +34,7 @@ class Robot:
         )
         self.next_pos = []
         self.next_facing = []
-        self.last_ploy = [self.pos, self.pos, self.pos]
-
-    def draw(self, win, level):
-        surf = level.lighting_map.copy()
-        if len(self.next_facing) == 0 and self.last_ploy:
-            ploy = self.last_ploy
-        else:
-            pos = self.pos
-            pos = pos[0] + TILE_SIZE / 2, pos[1] + TILE_SIZE / 2
-
-            ploy = lighting.get_rays(
-                pos, level.walls, start_angle=-60, end_angle=60, ray_num=250
-            )
-            self.last_plot = ploy
-
-        pygame.draw.polygon(surf, (255, 255, 255), ploy)
-
-        surf.convert_alpha()
-        surf.set_alpha(100)
-        win.blit(surf, (0, 0))
-        win.blit(self.image, self.pos)
+        self.last_ploy = None
 
     @property
     def level_pos(self):
@@ -81,11 +61,12 @@ class Robot:
         if move == MOVES.FD:
             if not self.check_fd(level):
                 return
-            self.next_pos = list(
-                np.linspace(self.pos, [self.x + TILE_SIZE * self.facing, self.y], 10)
-            )
+            _next_pos = [self.x + TILE_SIZE * self.facing, self.y]
+            self.next_pos = np.linspace(self.pos, _next_pos, 10)
+            self.next_pos = list(self.next_pos)
+
         if move == MOVES.INTERACT:
-            # level.interactables
+
             ...
 
     def update(self, level, move=None):
@@ -102,3 +83,35 @@ class Robot:
             return
 
         self.handle_move(level, move)
+
+    def draw(self, win, level):
+        surf = level.lighting_map.copy()
+        pos = self.pos
+        pos = pos[0] + 14, pos[1] + 18
+        if len(self.next_facing) == 0 and self.last_ploy:
+            ploy = self.last_ploy
+        else:
+
+            ploy = lighting.get_rays(pos, level.walls, ray_num=100)
+            logging.warning(pos in ploy)
+            # ploy.extend(ploy[1:3])
+
+        pygame.draw.polygon(surf, (214, 183, 26), ploy)
+        # for i in ploy:
+        # pygame.draw.line(surf, (255, 255, 255), i, pos)
+
+        surf.convert_alpha()
+        surf.set_alpha(100)
+        # surf = palette_swap(surf, (214, 183, 26, 150), (214, 183, 26, 100))
+        # surf = palette_swap(surf, (0, 0, 0, 150), (0, 0, 0, 150))
+
+        win.blit(surf, (0, 0))
+        win.blit(self.image, self.pos)
+
+
+def palette_swap(surf, old_c, new_c):
+    img_copy = pygame.Surface(surf.get_size())
+    img_copy.fill(new_c)
+    surf.set_colorkey(old_c)
+    img_copy.blit(surf, (0, 0))
+    return img_copy

@@ -1,14 +1,18 @@
 import pygame
 
-from conts import BLACK, TILE_SIZE
+from conts import TILE_SIZE
 
 from .tile import TILE_TYPES, Tile
+from .lift import Lift
+
+WALKABLE_TILES = [TILE_TYPES.PATH, TILE_TYPES.END_POINT, TILE_TYPES.START_POINT]
 
 
 class Level:
     def __init__(self, path):
         from .level_loader import get_level, parse_level_data
 
+        # level dat
         self.level_data = get_level(path)
         self.level, self.path = parse_level_data(self.level_data)
         self.start_point = (
@@ -16,10 +20,61 @@ class Level:
             self.path[0][0] * TILE_SIZE,
         )
         self.walls = []
+        # create the groups
         self.fg_tiles = pygame.sprite.Group()
         self.bg_tiles = pygame.sprite.Group()
+        self.interatavles = pygame.sprite.Group()
+        # fill the groups
         self.create_tiles()
+
+        self.interatavles.add(
+            Lift((2 * TILE_SIZE, 1 * TILE_SIZE), (2 * TILE_SIZE, 2 * TILE_SIZE))
+        )
         self.make_lighting_map()
+        self.make_corners()
+
+    def make_corners(self):
+        self.coners = []
+        for i in self.fg_tiles.sprites():
+            # print(i.tile_corners)
+            self.coners.extend(i.tile_corners)
+
+        # width = len(self.level) - 1
+        # height = len(self.level[0]) - 1
+
+    # self.coners = []
+
+    # for i, row in enumerate(self.level):
+    #     for j, _ in enumerate(row):
+
+    #         down = j < height
+    #         up = i > 0
+    #         right = i < width
+    #         left = j > 0
+    #         # TO CHECK WHERE EDGES ARE, IDK WHY CAP LOCKS
+
+    #         if self.level[i][j] in WALKABLE_TILES:
+    #             self.coners.append((j, i))
+
+    #         if right and self.level[i + 1][j] in WALKABLE_TILES:
+    #             self.coners.append((j, i + 1))
+
+    #         if down and self.level[i][j + 1] in WALKABLE_TILES:
+    #             self.coners.append((j + 1, i))
+
+    #         if right and down and self.level[i + 1][j + 1] in WALKABLE_TILES:
+    #             self.coners.append((j + 1, i + 1))
+
+    #         if left and self.level[i - 1][j] in WALKABLE_TILES:
+    #             self.coners.append((j, i - 1))
+
+    #         if up and self.level[i][j - 1] in WALKABLE_TILES:
+    #             self.coners.append((j - 1, i))
+
+    #         if left and up and self.level[i - 1][j - 1] in WALKABLE_TILES:
+    #             self.coners.append((j - 1, i - 1))
+
+    # self.coners = [(i[0] * TILE_SIZE, i[1] * TILE_SIZE) for i in self.coners]
 
     @property
     def size(self):
@@ -64,7 +119,7 @@ class Level:
         left = i > 0
         right = i < width
 
-        neighbours = [False, False, False, False]
+        neighbours = [False] * 4
 
         # TO CHECK WHERE EDGES ARE, IDK WHY CAP LOCKS
         if left and self.level[i - 1][j] == TILE_TYPES.NONE:
@@ -76,7 +131,7 @@ class Level:
         if down and self.level[i][j + 1] == TILE_TYPES.NONE:
             neighbours[3] = True
 
-        coner_neighbours = [False, False, False, False]
+        coner_neighbours = [False] * 4
 
         # if corner are walkable
         if left and down and self.level[i - 1][j + 1] == TILE_TYPES.NONE:
@@ -97,6 +152,8 @@ class Level:
 
     def draw_fg(self, win):
         self.fg_tiles.draw(win)
+        self.interatavles.update()
+        self.interatavles.draw(win)
 
     def draw_bg(self, win):
         self.bg_tiles.draw(win)

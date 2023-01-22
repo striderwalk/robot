@@ -1,3 +1,4 @@
+from itertools import cycle
 import logging
 from enum import Enum
 
@@ -5,7 +6,7 @@ import numpy as np
 import pygame
 
 import lighting
-from conts import TILE_SIZE
+from conts import HEIGHT, TILE_SIZE, WHITE, WIDTH
 from level import TILE_TYPES
 
 
@@ -25,6 +26,7 @@ class Robot:
         super().__init__()
         self.image = pygame.image.load("./assets/robot.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (TILE_SIZE, TILE_SIZE))
+        self.load_images()
         self.x = pos[0] + (TILE_SIZE - self.image.get_width()) / 2
         self.y = pos[1] + TILE_SIZE
         self.y -= self.image.get_height()
@@ -35,6 +37,7 @@ class Robot:
         self.next_pos = []
         self.next_facing = []
         self.last_ploy = None
+        self.dtime = 0  # time since last move
 
     @property
     def level_pos(self):
@@ -58,6 +61,7 @@ class Robot:
 
     def handle_move(self, level, move):
         logging.debug(f"{move=}")
+
         if move == MOVES.FD:
             if not self.check_fd(level):
                 return
@@ -69,7 +73,28 @@ class Robot:
 
             ...
 
+    def load_images(self):
+        # es muy malo
+        self.images = []
+        for i in range(24):
+
+            self.images.append(
+                pygame.image.load(
+                    f"./assets/robot_{str(i).zfill(3)}.png"
+                ).convert_alpha()
+            )
+
+        self.images = cycle(self.images)
+
+    def image_update(self):
+        self.image = next(self.images)
+
     def update(self, level, move=None):
+        if self.dtime > 8:
+            self.image_update()
+        if self.dtime > 8 + 25:
+            self.dtime = 0
+
         if level.level[self.level_pos[1]][self.level_pos[0]] == TILE_TYPES.NONE:
             self.kill()
 
@@ -80,7 +105,11 @@ class Robot:
             self.facing = self.next_facing.pop(0)
 
         if self.next_pos or self.next_facing or not move:
+            self.dtime += 1
+
             return
+        else:
+            self.dtime = 0
 
         self.handle_move(level, move)
 
@@ -92,21 +121,24 @@ class Robot:
             ploy = self.last_ploy
         else:
 
-            ploy = lighting.get_rays(pos, level.walls, ray_num=100)
-            logging.warning(pos in ploy)
+            ploy = lighting.get_rays(pos, level.walls, level.coners)
+
             # ploy.extend(ploy[1:3])
 
         pygame.draw.polygon(surf, (214, 183, 26), ploy)
-        # for i in ploy:
-        # pygame.draw.line(surf, (255, 255, 255), i, pos)
 
         surf.convert_alpha()
         surf.set_alpha(100)
-        # surf = palette_swap(surf, (214, 183, 26, 150), (214, 183, 26, 100))
-        # surf = palette_swap(surf, (0, 0, 0, 150), (0, 0, 0, 150))
 
         win.blit(surf, (0, 0))
         win.blit(self.image, self.pos)
+        _temp_win = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        pygame.draw.polygon(_temp_win, WHITE, ploy)
+        for i in ploy:
+            pygame.draw.circle(_temp_win, (12, 111, 255), i, 2)
+        for i in level.coners:
+            pygame.draw.circle(_temp_win, (255, 111, 31), i, 2)
+        return _temp_win
 
 
 def palette_swap(surf, old_c, new_c):

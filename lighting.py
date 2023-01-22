@@ -5,7 +5,7 @@ from typing import NamedTuple
 import numpy as np
 import pygame
 
-from conts import HEIGHT, WIDTH
+from conts import HEIGHT, WIDTH, TILE_SIZE
 
 
 class Line(NamedTuple):
@@ -116,31 +116,24 @@ def check_others(others, mouse_pos):
             return i
 
 
-def get_rays(pos, others=None, ray_num=1000, start_angle=0, end_angle=360):
+def get_rays(pos, others, coners):
     logging.info(f"{pos=}, f{len(others)}")
-    dtheata = (math.pi * 2) / ray_num
-    theata = math.radians(start_angle)
-    max_theata = math.radians(end_angle)
     if others:
         if check_others(others, pos):
             return False
     points = []
-    for _ in range(ray_num):
-        if theata > max_theata:
-            break
-        # find dis from wall
-        dis_x = max(pos[0], WIDTH - pos[0]) * 1.5
-        dis_y = max(pos[1], HEIGHT - pos[1]) * 1.5
-        hyp = math.hypot(dis_x, dis_y)
 
-        x = math.cos(theata) * hyp + pos[0]
-        y = math.sin(theata) * hyp + pos[1]
-
+    for i in coners:
+        x, y = i
         last_point = (x, y)
         if new := Line(pos, last_point).find_intersection(others):
             last_point = new
 
         points.append(last_point)
-        theata += dtheata
+
+    points = [tuple(i) for i in points]
+    angles_and_points = [(i, math.atan2(i[1] - pos[1], i[0] - pos[0])) for i in points]
+    angles_and_points.sort(key=lambda x: x[1])
+    points = [i[0] for i in angles_and_points]
 
     return points

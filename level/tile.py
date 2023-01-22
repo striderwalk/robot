@@ -5,6 +5,7 @@ import pygame
 
 from conts import HEIGHT, TILE_SIZE, WIDTH
 from paths import TILE_PATH_MAP
+import numpy as np
 
 
 class TILE_TYPES(Enum):
@@ -25,6 +26,25 @@ class Tile(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (TILE_SIZE, TILE_SIZE))
         super().__init__()
         self.rect = pygame.Rect(*pos, TILE_SIZE, TILE_SIZE)
+        self.pos = pos
+
+    @property
+    def corners(self):
+        return (
+            self.rect.topleft,
+            self.rect.topright,
+            self.rect.bottomright,
+            self.rect.bottomleft,
+        )
+
+    @property
+    def tile_corners(self):
+        center = np.array(self.rect.center)
+
+        c = [
+            ((np.array(i) - center) * (0.90625 + 3 / 32)) + center for i in self.corners
+        ]
+        return c
 
 
 pygame.init()

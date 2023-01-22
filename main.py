@@ -1,29 +1,12 @@
 import logging
 
 import pygame
+from game import Game
 
 
 import setup_logger
-from conts import BG_COLOUR, FPS, HEIGHT, TILE_SIZE, WIDTH
-from level import Level
-from robot import MOVES, Robot
-
-
-class Game:
-    def __init__(self) -> None:
-        self.level = Level("./levels/level.json")
-
-        # player group only contains only
-        # it uses a sprte group bc the interface is nice to use
-        self.player = Robot(self.level.start_point)
-
-    def update(self, move):
-        self.player.update(self.level, move)
-
-    def draw(self, win):
-        self.level.draw_fg(win)
-        self.player.draw(win, self.level)
-        self.level.draw_bg(win)
+from conts import BG_COLOUR, FPS, HEIGHT, WIDTH
+from robot import MOVES
 
 
 def handle_events():
@@ -45,7 +28,7 @@ def handle_events():
 def main():
     # setup pygame -------------------------------->
     pygame.init()
-    win = pygame.display.set_mode((WIDTH, HEIGHT))
+    win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
     clock = pygame.time.Clock()
     # setup game -------------------------------->
     game = Game()
@@ -57,7 +40,8 @@ def main():
         screen = pygame.Surface((32 * 8, 32 * 4))
         game.update(move)
         game.draw(screen)
-        screen = pygame.transform.scale(screen, (800, 400))
+        w, h = win.get_size()
+        screen = pygame.transform.scale(screen, (w, h))
         win.blit(screen, (0, 0))
         # store the player's move
         move = handle_events()
